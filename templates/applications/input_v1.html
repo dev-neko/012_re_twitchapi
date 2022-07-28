@@ -86,7 +86,7 @@
 
 
 
-				{% include "base/popover_headline_v1.html" with title="<h5>csvファイルの保存・削除・プレビュー</h5>" description="チェックボックスを入れたvideoidのcsvファイルを保存・削除・プレビューします。<br>複数同時に操作可能です。<br>取得中にも操作可能です。" only %}
+				{% include "base/popover_headline_v1.html" with title="<h5>範囲選択・batファイルの保存</h5>" description="選択されたvideoidの範囲選択ページを開き、batファイルを保存します。" only %}
 				<div class="form-group">
 					<select class="form-control" name="select_video">
 						{% for item in finish_dist %}
@@ -96,7 +96,7 @@
 					<div class="d-flex align-items-center">
 						<div>
 							<div class="btn-group">
-								<button onFocus="this.blur()" type="submit" class="btn btn-info mt-1" name="db_action" value='select_range' formtarget="_blank">範囲選択</button>
+								<button onFocus="this.blur()" type="submit" class="btn btn-info mt-1" name="db_action" value='select_range' formtarget="_blank">範囲選択ページを開く</button>
 							</div>
 						</div>
 					</div>
