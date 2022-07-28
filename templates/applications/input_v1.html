@@ -86,7 +86,7 @@
 
 
 
-				{% include "base/popover_headline_v1.html" with title="<h5>範囲選択・batファイルの保存</h5>" description="選択されたvideoidの範囲選択ページを開き、batファイルを保存します。" only %}
+				{% include "base/popover_headline_v1.html" with title="<h5>範囲選択・batファイルの保存</h5>" description="ファイルの保存は範囲選択ページ右下の「batファイルの保存」より行います。<br>範囲の単位は「分」です。<br>範囲が0分の場合はbatファイルには含まれません。" only %}
 				<div class="form-group">
 					<select class="form-control" name="select_video">
 						{% for item in finish_dist %}
