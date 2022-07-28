@@ -625,6 +625,65 @@ def ajax_proc_dd(request):
 			# print(videoid_ts_chat_dist)
 			return render(request,'applications/preview_v1.html',{'json_resp':json_resp})
 
+		# 範囲を選択するページを表示させる
+		elif request.POST.get('db_action')=='select_range':
+			# print(request.POST.get('select_video'))
+			# videoidのts_chat_distとタイトルを辞書型リストで返す
+			videoid=request.POST.get('select_video')
+			json_resp={'videoid':videoid,
+			           'ts_chat_dist':eval(DBModel.objects.get(md_name=videoid).md_ts_chat),
+			           'title':DBModel.objects.get(md_name=videoid).md_video_title}
+			# print(json_resp)
+			return render(request,'applications/select_range_v1.html',{'json_resp':json_resp})
+
+		# batファイルを作成してDL
+		elif request.POST.get('db_action')=='bat_dl':
+			# print(request.POST)
+
+			min_range_list=request.POST.getlist('min_range')
+			ts_list=request.POST.getlist('hidden_ts')
+			videoid=request.POST.get('hidden_videoid')
+			title=request.POST.get('hidden_title')
+			# print(min_range_list)
+			# print(ts_list)
+
+			# テキストの内容
+			content=f'@echo off\n\nset vodid={videoid}\nmd %vodid%\n\n\n\n'
+
+			for (min_range,ts) in zip(min_range_list,ts_list):
+				if min_range != '0':
+					# print(f'0じゃない min_range:{min_range} ts:{ts}')
+
+					ts_dt=dt.strptime(ts,'%H:%M:%S')
+					b_time=ts_dt.hour*60*60+ts_dt.minute*60+ts_dt.second
+					# print(b_time)
+
+					e_time=b_time+int(min_range)*60
+					# print(e_time)
+
+					content+=f'''set b_time={b_time}
+set e_time={e_time}
+
+set video_name=video_%b_time%s_%e_time%s
+set chat_name=chat_%b_time%s_%e_time%s
+
+echo videoid:%vodid% %b_time%s to %e_time%s process started
+
+TwitchDownloaderCLI -m VideoDownload --id %vodid% --ffmpeg-path "ffmpeg.exe" -o %vodid%\%video_name%.mp4 -b %b_time% -e %e_time%
+TwitchDownloaderCLI -m ChatDownload --id %vodid% -o %vodid%\%chat_name%.json -b %b_time% -e %e_time%
+TwitchDownloaderCLI -m ChatRender -i %vodid%\%chat_name%.json -h 1080 -w 422 --framerate 30 --update-rate 0 --font-size 18 -o %vodid%\%chat_name%.mp4
+
+
+
+'''
+
+			content+=f'pause'+'\n'+'exit'
+
+			response=HttpResponse(content,content_type="text/plain")
+			response["Content-Disposition"]=f"attachment; filename={videoid}.bat"
+			return response
+			# return HttpResponse(status=204)
+
 		# 何もしないので204を返す
 		else:
 			return HttpResponse(status=204)

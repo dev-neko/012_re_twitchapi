@@ -60,26 +60,44 @@
 						</div>
 					</div>
 				{% endfor %}
+
+					<!-- 保存・削除・プレビューボタン -->
+					<div class="d-flex align-items-center">
+						<div>
+							<!-- 保存ボタン -->
+							<div class="btn-group">
+								<button onFocus="this.blur()" type="submit" class="btn btn-success" name="db_action" id="db_action_save" value='save'>保存</button>
+							</div>
+							<!-- 削除ボタン -->
+							<div class="btn-group">
+								<button onFocus="this.blur()" type="submit" class="btn btn-danger" name="db_action" id="db_action_delete" value='delete'>削除</button>
+							</div>
+							<!-- プレビューボタン -->
+							<div class="btn-group">
+								<!--
+								別のタブで開くために formtarget="_blank" を付与
+								https://feeld-uni.com/entry/2021/01/24/152038
+								-->
+								<button onFocus="this.blur()" type="submit" class="btn btn-warning" name="db_action" id="db_action_preview" value='preview' formtarget="_blank">プレビュー</button>
+							</div>
+						</div>
+					</div>
 				</div>
 
-				<!-- 保存・削除ボタン -->
-				<div class="d-flex align-items-center">
-					<div>
-						<!-- 保存ボタン -->
-						<div class="btn-group">
-							<button onFocus="this.blur()" type="submit" class="btn btn-success" name="db_action" id="db_action_save" value='save'>保存</button>
-						</div>
-						<!-- 削除ボタン -->
-						<div class="btn-group">
-							<button onFocus="this.blur()" type="submit" class="btn btn-danger" name="db_action" id="db_action_delete" value='delete'>削除</button>
-						</div>
-						<!-- プレビューボタン -->
-						<div class="btn-group">
-							<!--
-							別のタブで開くために formtarget="_blank" を付与
-							https://feeld-uni.com/entry/2021/01/24/152038
-							-->
-							<button onFocus="this.blur()" type="submit" class="btn btn-warning" name="db_action" id="db_action_preview" value='preview' formtarget="_blank">プレビュー</button>
+
+
+				{% include "base/popover_headline_v1.html" with title="<h5>csvファイルの保存・削除・プレビュー</h5>" description="チェックボックスを入れたvideoidのcsvファイルを保存・削除・プレビューします。<br>複数同時に操作可能です。<br>取得中にも操作可能です。" only %}
+				<div class="form-group">
+					<select class="form-control" name="select_video">
+						{% for item in finish_dist %}
+							<option value="{{ item.videoid }}">{{ item.videoid }} {{item.title}}</option>
+						{% endfor %}
+					</select>
+					<div class="d-flex align-items-center">
+						<div>
+							<div class="btn-group">
+								<button onFocus="this.blur()" type="submit" class="btn btn-info mt-1" name="db_action" value='select_range' formtarget="_blank">範囲選択</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -88,18 +106,6 @@
 				<input type="hidden" id="db_action">
 
 			</form>
-
-
-
-
-
-
-
-
-
-
-
-
 
 		</div>
 

@@ -1,0 +1,63 @@
+{% load static %}
+{% load custom_filters %}
+<html>
+	<head>
+		{% include 'base/head.html' %}
+	</head>
+	<body>
+		{% include 'base/headder_navbar.html' %}
+		<div class="between-headder-footer">
+
+
+
+			<h4>{{json_resp.videoid}} {{json_resp.title}}</h4>
+
+			<form id="awe" action="{% url 'app_urls:ajax_proc_dd' %}" method="POST">
+				{% csrf_token %}
+
+				<input type="hidden" name="hidden_videoid" value="{{ json_resp.videoid }}">
+				<input type="hidden" name="hidden_title" value="{{ json_resp.title }}">
+
+				<div class="form-group">
+
+				{% for ts_chat in json_resp.ts_chat_dist %}
+
+					<div class="form-row align-items-center">
+
+						<div class="col-auto mb-1">
+							<input type="number" class="form-control" name="min_range" min="0" value="0" style="width:70px;">
+							<input type="hidden" name="hidden_ts" value="{{ ts_chat.ts }}">
+						</div>
+
+						<div class="col-auto">
+							<a href="https://www.twitch.tv/videos/{{json_resp.videoid}}?t={{ ts_chat.ts|hhmmss_conv }}" target="_blank">{{ ts_chat.ts }}</a> {{ ts_chat.chat }}<br>
+						</div>
+
+					</div>
+
+				{% endfor %}
+
+					<footer class="fixed-bottom m-2">
+					<button onFocus="this.blur()" type="submit" class="btn btn-info float-right" name="db_action" value="bat_dl">batファイルのダウンロード</button>
+					</footer>
+
+				</div>
+
+			</form>
+
+		</div>
+
+
+
+		<!-- 外部jsファイル ajax -->
+		<script type="text/javascript" src="{% static 'js/ajax_test.js' %}"></script>
+	</body>
+	<script>
+		//BootstrapのPopperを使用するためのJS
+		(function() {
+			window.addEventListener("load", function () {
+				$('[data-toggle="popover"]').popover();
+			});
+		})();
+	</script>
+</html>

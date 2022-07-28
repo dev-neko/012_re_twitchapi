@@ -15,6 +15,9 @@ SECRET_KEY=os.environ.get('SECRET_KEY')
 # ajaxへpostする際のサイズ上限を指定
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
+# The number of GET/POST parameters exceeded settings.DATA_UPLOAD_MAX_NUMBER_FIELDS.
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
