@@ -29,6 +29,8 @@
 							<input type="hidden" name="hidden_ts" value="{{ ts_chat.ts }}">
 						</div>
 
+						<div class="col-auto"></div>
+
 						<div class="col-auto">
 							<a href="https://www.twitch.tv/videos/{{json_resp.videoid}}?t={{ ts_chat.ts|hhmmss_conv }}" target="_blank">{{ ts_chat.ts }}</a> {{ ts_chat.chat }}<br>
 						</div>
@@ -38,7 +40,8 @@
 				{% endfor %}
 
 					<footer class="fixed-bottom m-2">
-					<button onFocus="this.blur()" type="submit" class="btn btn-info float-right" name="db_action" value="bat_dl">batファイルの保存</button>
+						<button onFocus="this.blur()" type="submit" class="btn btn-info float-right" name="db_action" value="bat_dl">batファイルの保存</button>
+						<button onFocus="this.blur()" type="button" class="btn btn-info float-right"  id="btn1">aaa</button>
 					</footer>
 
 				</div>
@@ -59,5 +62,13 @@
 				$('[data-toggle="popover"]').popover();
 			});
 		})();
+
+		$("input[name='min_range']").change(function(){
+			if ($(this).val() != 0) {
+				$(this).parent().next().text("★");
+			} else {
+				$(this).parent().next().text("");
+			}
+		});
 	</script>
 </html>
