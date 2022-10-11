@@ -13,8 +13,10 @@
 
 
 			<ul class="nav nav-tabs" role="tablist">
+
 				{% for item in json_resp %}
 					<li class="nav-item">
+
 						{% if forloop.first %}
 							<a class="nav-link active" id="id_{{item.videoid}}-tab" data-toggle="tab" href="#id_{{item.videoid}}" role="tab" aria-controls="id_{{item.videoid}}" aria-selected="true">{{item.videoid}} {{item.title}}
 							</a>
@@ -22,24 +24,33 @@
 							<a class="nav-link" id="id_{{item.videoid}}-tab" data-toggle="tab" href="#id_{{item.videoid}}" role="tab" aria-controls="id_{{item.videoid}}" aria-selected="false">{{item.videoid}} {{item.title}}
 							</a>
 						{% endif %}
+
 					</li>
 				{% endfor %}
+
 			</ul>
 			<div class="tab-content">
+
 				{% for item in json_resp %}
+
 					{% if forloop.first %}
 						<div class="tab-pane fade show active" id="id_{{item.videoid}}" role="tabpanel" aria-labelledby="id_{{item.videoid}}-tab">
 							ts,chat<br>
+
 							{% for aaa in item.ts_chat_dist %}
 								<a href="https://www.twitch.tv/videos/{{item.videoid}}?t={{ aaa.ts|hhmmss_conv }}" target="_blank">{{ aaa.ts }}</a>,{{ aaa.chat }}<br>
 							{% endfor %}
+
 						</div>
 					{% else %}
+
 						<div class="tab-pane fade" id="id_{{item.videoid}}" role="tabpanel" aria-labelledby="id_{{item.videoid}}-tab">
 							ts,chat<br>
+
 							{% for aaa in item.ts_chat_dist %}
 								<a href="https://www.twitch.tv/videos/{{item.videoid}}?t={{ aaa.ts|hhmmss_conv }}" target="_blank">{{ aaa.ts }}</a>,{{ aaa.chat }}<br>
 							{% endfor %}
+
 						</div>
 					{% endif %}
 				{% endfor %}
