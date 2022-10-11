@@ -8,6 +8,7 @@
 	<div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 	<ul class="navbar-nav">
 
+		{% comment '' %}
 		<!-- active disabled
 		<li class="nav-item">
 		<a class="nav-link active" href="{% url 'app_urls:userdata' %}">ユーザデータ登録</a>
@@ -26,6 +27,7 @@
 		<a class="nav-link disabled" href="{% url 'app_urls:userdata' %}">ユーザデータ登録</a>
 		</li>
 		-->
+		{% endcomment %}
 
 		<li class="nav-item">
 		<a class="nav-link active" href="{% url 'logout' %}">ログアウト</a>

@@ -440,155 +440,6 @@ def ajax_proc_aaa_old_3(request):
 
 	return JsonResponse(json_resp)
 
-
-
-
-
-
-def input_v1(request):
-	# ログインの確認
-	if request.user.is_authenticated:
-		# ページ読み込み時にDBのデータを全て読み込む
-		try:
-			DB_data=DBModel.objects.all()
-			# print(DB_data)
-			# finish_list=[ i.md_name for i in DB_data if i.md_dl_state=='finish']
-			finish_dist=[{'videoid':i.md_name,'title':i.md_video_title} for i in DB_data if i.md_dl_state=='finish']
-			# print(finish_list)
-		except:
-			finish_dist=[]
-		json_resp={'finish_dist':finish_dist}
-		# print(json_resp)
-		# ここでは辞書を返さないとエラーになる
-		return render(request, 'applications/input_v1.html', json_resp)
-	else:
-		return HttpResponseRedirect('/accounts/login/')
-
-# csvファイルの保存・削除・プレビュー
-# 範囲選択・batファイルの保存
-def ajax_proc_dd(request):
-	if request.method=='POST':
-		# print(request.POST)
-		# print(request.body)
-
-		# saveかつvideoidが空でない
-		if (request.POST.get('db_action')=='save') and (request.POST.getlist('videoids')):
-			# 書き込むzipファイルの準備
-			# https://www.memory-lovers.blog/entry/2017/06/25/180052
-			memory_file=BytesIO() #エラーなし
-			# res_zip=StringIO() #TypeError string argument expected, got 'bytes'
-			# res_zip = HttpResponse(content_type='application/zip') #予期しない型
-			zip_file=zipfile.ZipFile(memory_file,'w')
-
-			for videoid in request.POST.getlist('videoids'):
-				# DBからvideoidで検索してts_chat_distを取得
-				DB_data=DBModel.objects.get(md_name=videoid)
-				# print(DB_data)
-				# DBから取得した直後は文字列なのでevalで辞書型リストに変換
-				ts_chat_dist=eval(DB_data.md_ts_chat)
-
-				# csv作成、zipにまとめる
-				csv_file=HttpResponse(content_type='text/csv')
-				# csv_file=BytesIO() #TypeError: a bytes-like object is required, not 'str'
-				writer=csv.DictWriter(csv_file,['ts','chat'])
-				writer.writeheader()
-				writer.writerows(ts_chat_dist)
-				# print(csv_file.getvalue())
-				# zipにまとめる
-				zip_file.writestr(f'{videoid}.csv',csv_file.getvalue())
-				csv_file.close()
-
-			# zipファイルの内容をreponseに設定
-			zip_file.close() #ここでcloseしないとエラー発生して解凍できない
-			response=HttpResponse(memory_file.getvalue(), content_type='application/zip')
-			# videoidを,で区切ってファイル名にする
-			response['Content-Disposition']=f'attachment; filename="{",".join(request.POST.getlist("videoids"))}.zip"'
-
-			return response
-
-		# deleteの場合、andでrequest.POST.getlist('videoids')すると削除できない
-		elif request.POST.get('db_action')=='delete':
-			for videoid in request.POST.getlist("videoids[]"):
-				DBModel.objects.get(md_name=videoid).delete()
-				pass
-
-			# ajaxに返すレスポンス
-			json_resp={'videoids':request.POST.getlist("videoids[]"),
-								 }
-			print(json_resp)
-
-			return JsonResponse(json_resp)
-
-		# previewページを表示させる
-		elif request.POST.get('db_action')=='preview' and request.POST.getlist('videoids'):
-			# videoidごとのts_chat_distとタイトルを辞書型リストで返す
-			json_resp=[{'videoid':videoid,'ts_chat_dist':eval(DBModel.objects.get(md_name=videoid).md_ts_chat),'title':DBModel.objects.get(md_name=videoid).md_video_title} for videoid in request.POST.getlist('videoids')]
-			# print(videoid_ts_chat_dist)
-			return render(request,'applications/preview_v1.html',{'json_resp':json_resp})
-
-		# 範囲を選択するページを表示させる
-		elif request.POST.get('db_action')=='select_range':
-			# print(request.POST.get('select_video'))
-			# videoidのts_chat_distとタイトルを辞書型リストで返す
-			videoid=request.POST.get('select_video')
-			json_resp={'videoid':videoid,
-								 'ts_chat_dist':eval(DBModel.objects.get(md_name=videoid).md_ts_chat),
-								 'title':DBModel.objects.get(md_name=videoid).md_video_title}
-			# print(json_resp)
-			return render(request,'applications/select_range_v1.html',{'json_resp':json_resp})
-
-		# batファイルを作成してDL
-		elif request.POST.get('db_action')=='bat_dl':
-			# print(request.POST)
-
-			min_range_list=request.POST.getlist('min_range')
-			ts_list=request.POST.getlist('hidden_ts')
-			videoid=request.POST.get('hidden_videoid')
-			title=request.POST.get('hidden_title')
-			# print(min_range_list)
-			# print(ts_list)
-
-			# テキストの内容
-			content=f'@echo off\n\nset vodid={videoid}\nmd %vodid%\n\n\n\n'
-
-			for (min_range,ts) in zip(min_range_list,ts_list):
-				if min_range != '0':
-					# print(f'0じゃない min_range:{min_range} ts:{ts}')
-
-					ts_dt=dt.strptime(ts,'%H:%M:%S')
-					b_time=ts_dt.hour*60*60+ts_dt.minute*60+ts_dt.second
-					# print(b_time)
-
-					e_time=b_time+int(min_range)*60
-					# print(e_time)
-
-					content+=f'''set b_time={b_time}
-set e_time={e_time}
-
-set video_name=video_%b_time%s_%e_time%s
-set chat_name=chat_%b_time%s_%e_time%s
-
-echo videoid:%vodid% %b_time%s to %e_time%s process started
-
-TwitchDownloaderCLI -m VideoDownload --id %vodid% --ffmpeg-path "ffmpeg.exe" -o %vodid%\%video_name%.mp4 -b %b_time% -e %e_time%
-TwitchDownloaderCLI -m ChatDownload --id %vodid% -o %vodid%\%chat_name%.json -b %b_time% -e %e_time%
-TwitchDownloaderCLI -m ChatRender -i %vodid%\%chat_name%.json -h 1080 -w 422 --framerate 30 --update-rate 0 --font-size 18 -o %vodid%\%chat_name%.mp4
-
-
-
-'''
-
-			content+=f'pause'+'\n'+'exit'
-
-			response=HttpResponse(content,content_type="text/plain")
-			response["Content-Disposition"]=f"attachment; filename={videoid}.bat"
-			return response
-		# return HttpResponse(status=204)
-
-		# 何もしないので204を返す
-		else:
-			return HttpResponse(status=204)
-
 # DBから逐一辞書を取得せずpostで送受信する
 # タイムスタンプを秒だけにした→hh:mm:ssの形式にした
 def ajax_proc_aaa(request):
@@ -665,11 +516,11 @@ def ajax_proc_aaa(request):
 
 		# ajaxに返すレスポンス
 		json_resp={'videoids':post_data['req_videoids'],
-		           'progress':progress,
-		           'video_length':video_length,
-		           # 辞書型のリストで送信すると勝手に他の型に変換されて使えなくなるので、strでそのままの型で送信して後ほどevalする
-		           'ts_chat_dist':str(ts_chat_dist),
-		           }
+							 'progress':progress,
+							 'video_length':video_length,
+							 # 辞書型のリストで送信すると勝手に他の型に変換されて使えなくなるので、strでそのままの型で送信して後ほどevalする
+							 'ts_chat_dist':str(ts_chat_dist),
+							 }
 
 		# next_tokenの有無でif
 		if '_next' in ts_chat_data:
@@ -697,6 +548,26 @@ def ajax_proc_aaa(request):
 
 
 
+
+# トップページ
+def input_v1(request):
+	# ログインの確認
+	if request.user.is_authenticated:
+		# ページ読み込み時にDBのデータを全て読み込む
+		try:
+			DB_data=DBModel.objects.all()
+			# print(DB_data)
+			# finish_list=[ i.md_name for i in DB_data if i.md_dl_state=='finish']
+			finish_dist=[{'videoid':i.md_name,'title':i.md_video_title} for i in DB_data if i.md_dl_state=='finish']
+			# print(finish_list)
+		except:
+			finish_dist=[]
+		json_resp={'finish_dist':finish_dist}
+		# print(json_resp)
+		# ここでは辞書を返さないとエラーになる
+		return render(request, 'applications/input_v1.html', json_resp)
+	else:
+		return HttpResponseRedirect('/accounts/login/')
 
 # DBから逐一辞書を取得せずpostで送受信する→DBから逐一辞書を取得する
 # タイムスタンプを秒だけにした→hh:mm:ssの形式にした
@@ -828,10 +699,135 @@ def ajax_proc_test01(request):
 
 
 		# print(json_resp)
-		print(json_resp['videoids'])
-		print(json_resp['progress'])
+		# print(json_resp['videoids'])
+		# print(json_resp['progress'])
 
 	return JsonResponse(json_resp)
+
+# csvファイルの保存・削除・プレビュー
+# 範囲選択・batファイルの保存
+def ajax_proc_dd(request):
+	if request.method=='POST':
+		# print(request.POST)
+		# print(request.body)
+
+		# saveかつvideoidが空でない
+		if (request.POST.get('db_action')=='save') and (request.POST.getlist('videoids')):
+			# 書き込むzipファイルの準備
+			# https://www.memory-lovers.blog/entry/2017/06/25/180052
+			memory_file=BytesIO() #エラーなし
+			# res_zip=StringIO() #TypeError string argument expected, got 'bytes'
+			# res_zip = HttpResponse(content_type='application/zip') #予期しない型
+			zip_file=zipfile.ZipFile(memory_file,'w')
+
+			for videoid in request.POST.getlist('videoids'):
+				# DBからvideoidで検索してts_chat_distを取得
+				DB_data=DBModel.objects.get(md_name=videoid)
+				# print(DB_data)
+				# DBから取得した直後は文字列なのでevalで辞書型リストに変換
+				ts_chat_dist=eval(DB_data.md_ts_chat)
+
+				# csv作成、zipにまとめる
+				csv_file=HttpResponse(content_type='text/csv')
+				# csv_file=BytesIO() #TypeError: a bytes-like object is required, not 'str'
+				writer=csv.DictWriter(csv_file,['ts','chat'])
+				writer.writeheader()
+				writer.writerows(ts_chat_dist)
+				# print(csv_file.getvalue())
+				# zipにまとめる
+				zip_file.writestr(f'{videoid}.csv',csv_file.getvalue())
+				csv_file.close()
+
+			# zipファイルの内容をreponseに設定
+			zip_file.close() #ここでcloseしないとエラー発生して解凍できない
+			response=HttpResponse(memory_file.getvalue(), content_type='application/zip')
+			# videoidを,で区切ってファイル名にする
+			response['Content-Disposition']=f'attachment; filename="{",".join(request.POST.getlist("videoids"))}.zip"'
+
+			return response
+
+		# deleteの場合、andでrequest.POST.getlist('videoids')すると削除できない
+		elif request.POST.get('db_action')=='delete':
+			for videoid in request.POST.getlist("videoids[]"):
+				DBModel.objects.get(md_name=videoid).delete()
+				pass
+
+			# ajaxに返すレスポンス
+			json_resp={'videoids':request.POST.getlist("videoids[]"),
+								 }
+			print(json_resp)
+
+			return JsonResponse(json_resp)
+
+		# previewページを表示させる
+		elif request.POST.get('db_action')=='preview' and request.POST.getlist('videoids'):
+			# videoidごとのts_chat_distとタイトルを辞書型リストで返す
+			json_resp=[{'videoid':videoid,'ts_chat_dist':eval(DBModel.objects.get(md_name=videoid).md_ts_chat),'title':DBModel.objects.get(md_name=videoid).md_video_title} for videoid in request.POST.getlist('videoids')]
+			# print(videoid_ts_chat_dist)
+			return render(request,'applications/preview_v1.html',{'json_resp':json_resp})
+
+		# 範囲を選択するページを表示させる
+		elif request.POST.get('db_action')=='select_range':
+			# print(request.POST.get('select_video'))
+			# videoidのts_chat_distとタイトルを辞書型リストで返す
+			videoid=request.POST.get('select_video')
+			json_resp={'videoid':videoid,
+								 'ts_chat_dist':eval(DBModel.objects.get(md_name=videoid).md_ts_chat),
+								 'title':DBModel.objects.get(md_name=videoid).md_video_title}
+			# print(json_resp)
+			return render(request,'applications/select_range_v1.html',{'json_resp':json_resp})
+
+		# batファイルを作成してDL
+		elif request.POST.get('db_action')=='bat_dl':
+			# print(request.POST)
+
+			min_range_list=request.POST.getlist('min_range')
+			ts_list=request.POST.getlist('hidden_ts')
+			videoid=request.POST.get('hidden_videoid')
+			title=request.POST.get('hidden_title')
+			# print(min_range_list)
+			# print(ts_list)
+
+			# テキストの内容
+			content=f'@echo off\n\nset vodid={videoid}\nmd %vodid%\n\n\n\n'
+
+			for (min_range,ts) in zip(min_range_list,ts_list):
+				if min_range != '0':
+					# print(f'0じゃない min_range:{min_range} ts:{ts}')
+
+					ts_dt=dt.strptime(ts,'%H:%M:%S')
+					b_time=ts_dt.hour*60*60+ts_dt.minute*60+ts_dt.second
+					# print(b_time)
+
+					e_time=b_time+int(min_range)*60
+					# print(e_time)
+
+					content+=f'''set b_time={b_time}
+set e_time={e_time}
+
+set video_name=video_%b_time%s_%e_time%s
+set chat_name=chat_%b_time%s_%e_time%s
+
+echo videoid:%vodid% %b_time%s to %e_time%s process started
+
+TwitchDownloaderCLI -m VideoDownload --id %vodid% --ffmpeg-path "ffmpeg.exe" -o %vodid%\%video_name%.mp4 -b %b_time% -e %e_time%
+TwitchDownloaderCLI -m ChatDownload --id %vodid% -o %vodid%\%chat_name%.json -b %b_time% -e %e_time%
+TwitchDownloaderCLI -m ChatRender -i %vodid%\%chat_name%.json -h 1080 -w 422 --framerate 30 --update-rate 0 --font-size 18 -o %vodid%\%chat_name%.mp4
+
+
+
+'''
+
+			content+=f'pause'+'\n'+'exit'
+
+			response=HttpResponse(content,content_type="text/plain")
+			response["Content-Disposition"]=f"attachment; filename={videoid}.bat"
+			return response
+		# return HttpResponse(status=204)
+
+		# 何もしないので204を返す
+		else:
+			return HttpResponse(status=204)
 
 
 
