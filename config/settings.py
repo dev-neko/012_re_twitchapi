@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from django.core.management.utils import get_random_secret_key
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,7 +11,7 @@ DEBUG=False
 
 ALLOWED_HOSTS=['*']
 
-SECRET_KEY=os.environ.get('SECRET_KEY')
+SECRET_KEY=get_random_secret_key()
 
 # ajaxへpostする際のサイズ上限を指定
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
@@ -61,9 +62,19 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # dj_database_url.config()では、環境変数の一つであるDATABASE_URLを元に接続情報のディクショナリーが入ります。HerokuではディフォルトでDATABASE_URLにPostgresのパスが設定されているため、これ以上の設定は必要ありません。
 # https://qiita.com/terappy/items/803ff638d63b3dc09ada
-import dj_database_url
+# import dj_database_url
+# DATABASES = {
+#     'default': dj_database_url.config(),
+# }
 DATABASES = {
-    'default': dj_database_url.config(),
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'patest002$default',
+        'USER': 'patest002',
+        'PASSWORD': 'jhLMOMOgQwV7',
+        'HOST': 'patest002.mysql.pythonanywhere-services.com',
+        'PORT': '',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
