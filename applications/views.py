@@ -680,7 +680,7 @@ def ajax_proc_test01(request):
 			md_name=post_data['req_videoids'],
 			# 更新もしくは新規で追加したい値
 			defaults={
-				'md_ts_chat':ts_chat_dist,
+				'md_ts_chat':str(ts_chat_dist),
 				'md_dl_state':dl_state,
 			}
 		)
