@@ -580,7 +580,7 @@ def ajax_proc_test01(request):
 			'req_video_length':request.POST.get('video_length'),
 			'req_ts_chat_dist':request.POST.get('ts_chat_dist'),
 		}
-		# print(post_data)
+		print(post_data)
 
 		# 本来はもうAPIを使用してアーカイブのコメントは取得できないが、Twitch自身のclient_idを使用することで現在でも取得可能だがグレーな方法
 		# https://ja.stackoverflow.com/questions/83617/twitch-api-を用いてアーカイブ動画のコメントを取得したい
@@ -622,23 +622,15 @@ def ajax_proc_test01(request):
 			# strだけど中身は辞書型のリストなのでevalで変換
 			# ts_chat_dist_old=eval(post_data['req_ts_chat_dist'])
 
-
-
-
 		# DBからts_chat_distを取得
 		try:
 			DB_data=DBModel.objects.get(md_name=post_data['req_videoids'])
-			# print(DB_data)
+			print('DB_data',DB_data)
 			# DBから取得した直後は文字列なのでevalで辞書型リストに変換
 			ts_chat_dist_old=eval(DB_data.md_ts_chat)
 		# データが無い場合は空
 		except:
 			ts_chat_dist_old=[]
-
-
-
-
-
 
 		# tsとchatを取得
 		r=requests.get(ts_chat_url,headers=headers)
@@ -677,10 +669,6 @@ def ajax_proc_test01(request):
 			json_resp['next_token']='None'
 			dl_state='finish'
 
-
-
-
-
 		# DBに保存
 		DBModel.objects.update_or_create(
 			# ユニークな値
@@ -691,14 +679,7 @@ def ajax_proc_test01(request):
 				'md_dl_state':dl_state,
 			}
 		)
-
-
-
-
-
-
-
-		# print(json_resp)
+		print('json_resp',json_resp)
 		# print(json_resp['videoids'])
 		# print(json_resp['progress'])
 
