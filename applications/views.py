@@ -4,6 +4,8 @@ import math
 import urllib
 import zipfile
 from io import BytesIO,StringIO
+from pprint import pprint
+
 import requests
 from django.shortcuts import render
 from django.http import JsonResponse,HttpResponseRedirect
@@ -580,7 +582,7 @@ def ajax_proc_test01(request):
 			'req_video_length':request.POST.get('video_length'),
 			'req_ts_chat_dist':request.POST.get('ts_chat_dist'),
 		}
-		print(post_data)
+		# print(post_data)
 
 		# 本来はもうAPIを使用してアーカイブのコメントは取得できないが、Twitch自身のclient_idを使用することで現在でも取得可能だがグレーな方法
 		# https://ja.stackoverflow.com/questions/83617/twitch-api-を用いてアーカイブ動画のコメントを取得したい
@@ -625,9 +627,12 @@ def ajax_proc_test01(request):
 		# DBからts_chat_distを取得
 		try:
 			DB_data=DBModel.objects.get(md_name=post_data['req_videoids'])
-			print('DB_data',DB_data)
+			# print('DB_data',DB_data)
 			# DBから取得した直後は文字列なのでevalで辞書型リストに変換
 			ts_chat_dist_old=eval(DB_data.md_ts_chat)
+			# print('ts_chat_dist_old',ts_chat_dist_old)
+			print('------------------------------')
+			pprint(ts_chat_dist_old)
 		# データが無い場合は空
 		except:
 			ts_chat_dist_old=[]
@@ -679,7 +684,7 @@ def ajax_proc_test01(request):
 				'md_dl_state':dl_state,
 			}
 		)
-		print('json_resp',json_resp)
+		# print('json_resp',json_resp)
 		# print(json_resp['videoids'])
 		# print(json_resp['progress'])
 
