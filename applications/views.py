@@ -630,9 +630,9 @@ def ajax_proc_test01(request):
 			# print('DB_data',DB_data)
 			# DBから取得した直後は文字列なのでevalで辞書型リストに変換
 			ts_chat_dist_old=eval(DB_data.md_ts_chat)
-			# print('ts_chat_dist_old',ts_chat_dist_old)
 			print('------------------------------')
-			pprint(ts_chat_dist_old)
+			print('ts_chat_dist_old',ts_chat_dist_old)
+			# pprint(ts_chat_dist_old)
 		# データが無い場合は空
 		except:
 			ts_chat_dist_old=[]
