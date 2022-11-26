@@ -74,6 +74,9 @@ DATABASES = {
         'PASSWORD': 'jhLMOMOgQwV7',
         'HOST': 'patest002.mysql.pythonanywhere-services.com',
         'PORT': '',
+        'OPTIONS': {
+            'charset': 'utf8mb4', #絵文字に対応するために追加
+        },
     }
 }
 

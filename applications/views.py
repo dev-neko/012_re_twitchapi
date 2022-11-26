@@ -580,7 +580,7 @@ def ajax_proc_test01(request):
 			'req_videoids':request.POST.get('videoids'),
 			'req_next_token':request.POST.get('next_token'),
 			'req_video_length':request.POST.get('video_length'),
-			'req_ts_chat_dist':request.POST.get('ts_chat_dist'),
+			# 'req_ts_chat_dist':request.POST.get('ts_chat_dist'),
 		}
 		# print(post_data)
 
@@ -630,8 +630,8 @@ def ajax_proc_test01(request):
 			# print('DB_data',DB_data)
 			# DBから取得した直後は文字列なのでevalで辞書型リストに変換
 			ts_chat_dist_old=eval(DB_data.md_ts_chat)
-			print('------------------------------')
-			print('ts_chat_dist_old',ts_chat_dist_old)
+			# print('------------------------------')
+			# print('ts_chat_dist_old',ts_chat_dist_old)
 			# pprint(ts_chat_dist_old)
 		# データが無い場合は空
 		except:
@@ -645,8 +645,10 @@ def ajax_proc_test01(request):
 		# tsとchatを辞書型リストに格納
 		# tsは小数点以下も含まれることがあるので切り捨て
 		# 経過時間をhh:mm:ss形式に変換
-		ts_chat_dist=ts_chat_dist_old+[{'ts':str(datetime.timedelta(seconds=math.floor(int(comment['content_offset_seconds'])))),'chat':comment['message']['body']} for comment in ts_chat_data['comments'] ]
+		ts_chat_dist_new=[{'ts':str(datetime.timedelta(seconds=math.floor(int(comment['content_offset_seconds'])))),'chat':comment['message']['body']} for comment in ts_chat_data['comments'] ]
+		ts_chat_dist=ts_chat_dist_old+ts_chat_dist_new
 		# print(ts_chat_dist)
+		# print('ts_chat_dist_new',ts_chat_dist_new)
 
 		# 進捗を計算
 		# リストの最後のtsを取得
