@@ -69,10 +69,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'patest002$default',
-        'USER': 'patest002',
+        'NAME': '012twitchapi$default',
+        'USER': '012twitchapi',
         'PASSWORD': 'jhLMOMOgQwV7',
-        'HOST': 'patest002.mysql.pythonanywhere-services.com',
+        'HOST': '012twitchapi.mysql.pythonanywhere-services.com',
         'PORT': '',
         'OPTIONS': {
             'charset': 'utf8mb4', #絵文字に対応するために追加
