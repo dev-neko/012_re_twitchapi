@@ -1,8 +1,8 @@
 asgiref==3.4.1
 async-generator==1.10
 attrs==21.4.0
-beautifulsoup4==4.10.0
-bs4==0.0.1
+#beautifulsoup4==4.10.0
+#bs4==0.0.1
 certifi==2021.10.8
 cffi==1.15.0
 charset-normalizer==2.0.10
@@ -11,11 +11,11 @@ configparser==5.2.0
 crayons==0.4.0
 dj-database-url==0.5.0
 Django==3.2.10
-django-heroku==0.3.1
+#django-heroku==0.3.1
 emoji==1.7.0
 gunicorn==20.1.0
 h11==0.13.0
-heroku3==5.1.4
+#heroku3==5.1.4
 idna==3.3
 mysqlclient==2.1.1
 outcome==1.1.0
@@ -25,7 +25,7 @@ pycparser==2.21
 python-dateutil==2.8.2
 pytz==2021.3
 requests==2.27.1
-selenium==3.141.0
+#selenium==3.141.0
 six==1.16.0
 sniffio==1.2.0
 sortedcontainers==2.4.0
@@ -35,6 +35,6 @@ trio==0.19.0
 trio-websocket==0.9.2
 typing_extensions==4.0.1
 urllib3==1.26.8
-webdriver-manager==3.5.2
+#webdriver-manager==3.5.2
 whitenoise==5.3.0
 wsproto==1.0.0
