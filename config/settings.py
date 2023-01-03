@@ -5,11 +5,12 @@ from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# DEBUG=True にすると本番環境でもエラー内容が表示される
-DEBUG=False
-# DEBUG=True
+# DEBUG=False
+DEBUG=True
 
 ALLOWED_HOSTS=['*']
+CSRF_TRUSTED_ORIGINS=['https://012retwitchapi.aheahe1919.repl.co']
+CORS_ORIGIN_WHITELIST=['https://012retwitchapi.aheahe1919.repl.co']
 
 SECRET_KEY=get_random_secret_key()
 
@@ -60,25 +61,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# dj_database_url.config()では、環境変数の一つであるDATABASE_URLを元に接続情報のディクショナリーが入ります。HerokuではディフォルトでDATABASE_URLにPostgresのパスが設定されているため、これ以上の設定は必要ありません。
-# https://qiita.com/terappy/items/803ff638d63b3dc09ada
-# import dj_database_url
-# DATABASES = {
-#     'default': dj_database_url.config(),
-# }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '012twitchapi$default',
-        'USER': '012twitchapi',
-        'PASSWORD': 'jhLMOMOgQwV7',
-        'HOST': '012twitchapi.mysql.pythonanywhere-services.com',
-        'PORT': '',
-        'OPTIONS': {
-            'charset': 'utf8mb4', #絵文字に対応するために追加
-        },
+DATABASES={
+    'default':{
+        'ENGINE':'django.db.backends.sqlite3',
+        'NAME':os.path.join(BASE_DIR,'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django_cockroachdb',
+#         'NAME': 'twitch_test',
+#         'USER': 'twitch_test',
+#         'PASSWORD': 'AZx2l-Sz1TCAQrWQGFysIw',
+#         'HOST': 'cuddly-mastiff-3457.6xw.cockroachlabs.cloud',
+#         'PORT': '26257',
+#         'OPTIONS': {
+#             # 'sslmode': 'verify-full'
+#         },
+#     },
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
