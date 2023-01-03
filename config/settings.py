@@ -9,8 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG=True
 
 ALLOWED_HOSTS=['*']
-CSRF_TRUSTED_ORIGINS=['https://012retwitchapi.aheahe1919.repl.co']
-CORS_ORIGIN_WHITELIST=['https://012retwitchapi.aheahe1919.repl.co']
+
+CSRF_TRUSTED_ORIGINS=CORS_ORIGIN_WHITELIST=['https://012retwitchapi.aheahe1919.repl.co']
 
 SECRET_KEY=get_random_secret_key()
 

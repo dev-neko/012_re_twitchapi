@@ -11,36 +11,3 @@ sqlparse==0.4.3
 tzdata==2022.7
 urllib3==1.26.13
 whitenoise==5.3.0
-
-# 不要かも
-# gunicorn==20.1.0
-
-# 不要
-# urllib3==1.26.8
-# asgiref==3.6.0
-# async-generator==1.10
-# attrs==21.4.0
-# certifi==2021.10.8
-# cffi==1.15.0
-# charset-normalizer==2.0.10
-# colorama==0.4.4
-# configparser==5.2.0
-# crayons==0.4.0
-# dj-database-url==0.5.0
-# emoji==1.7.0
-# h11==0.13.0
-# idna==3.3
-# outcome==1.1.0
-# pip-autoremove==0.10.0
-# pycparser==2.21
-# python-dateutil==2.8.2
-# pytz==2021.3
-# six==1.16.0
-# sniffio==1.2.0
-# sortedcontainers==2.4.0
-# soupsieve==2.3.1
-# sqlparse==0.4.2
-# trio==0.19.0
-# trio-websocket==0.9.2
-# typing_extensions==4.0.1
-# wsproto==1.0.0
