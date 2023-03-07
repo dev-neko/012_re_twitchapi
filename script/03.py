@@ -37,3 +37,26 @@ while '_next' in row_data:
 				comment['content_offset_seconds'],
 				comment['message']['body']
 			])
+
+
+DATABASES = {
+	'default':{
+		'ENGINE':'django_cockroachdb',
+		'NAME':'defaultdb',
+		'USER':'test_user_001',
+		'PASSWORD':'4tdFSRpN5_0wDmDKNotSqw',
+		'HOST':'forge-warthog-3911.8nk.cockroachlabs.cloud',
+		'PORT':'26257',
+	},
+}
+
+DATABASES = {
+	'default':{
+		'ENGINE':'django_cockroachdb',
+		'NAME':os.environ['NAME'],
+		'USER':os.environ['USER'],
+		'PASSWORD':os.environ['PASSWORD'],
+		'HOST':os.environ['HOST'],
+		'PORT':os.environ['PORT'],
+	},
+}
