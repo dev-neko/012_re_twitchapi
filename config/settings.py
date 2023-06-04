@@ -10,7 +10,7 @@ DEBUG=True
 
 ALLOWED_HOSTS=['*']
 
-CSRF_TRUSTED_ORIGINS=CORS_ORIGIN_WHITELIST=['https://012twitchapi.mckqtpvx.repl.co']
+CSRF_TRUSTED_ORIGINS=CORS_ORIGIN_WHITELIST=['https://012retwitchapi.mckqtpvx.repl.co']
 
 SECRET_KEY=get_random_secret_key()
 
