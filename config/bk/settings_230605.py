@@ -10,7 +10,7 @@ DEBUG=True
 
 ALLOWED_HOSTS=['*']
 
-CSRF_TRUSTED_ORIGINS=CORS_ORIGIN_WHITELIST=['https://012twitchapi.mckqtpvx.repl.co']
+CSRF_TRUSTED_ORIGINS=CORS_ORIGIN_WHITELIST=['https://012retwitchapi.aheahe1919.repl.co']
 
 SECRET_KEY=get_random_secret_key()
 
@@ -67,6 +67,20 @@ DATABASES={
         'NAME':os.path.join(BASE_DIR,'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django_cockroachdb',
+#         'NAME': 'twitch_test',
+#         'USER': 'twitch_test',
+#         'PASSWORD': 'AZx2l-Sz1TCAQrWQGFysIw',
+#         'HOST': 'cuddly-mastiff-3457.6xw.cockroachlabs.cloud',
+#         'PORT': '26257',
+#         'OPTIONS': {
+#             # 'sslmode': 'verify-full'
+#         },
+#     },
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
