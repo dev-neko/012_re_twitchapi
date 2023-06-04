@@ -56,6 +56,7 @@ def ajax_proc_test01(request):
 		# headers={'client-id':'kimne78kx3ncx6brgo4mv6wki5h1ko'}
 		# 2023年6月5日 TwitchDownloaderで変更されていたので反映したら正常に動作した
 		headers={'client-id':'kd1unb4b3q4t58fwlpcbzcbnm76a8fp'}
+		# aaa
 
 		# 追加
 		ts_chat_url='https://gql.twitch.tv/gql'
