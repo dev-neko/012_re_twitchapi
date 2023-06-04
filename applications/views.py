@@ -53,7 +53,9 @@ def ajax_proc_test01(request):
 
 		# 本来はもうAPIを使用してアーカイブのコメントは取得できないが、Twitch自身のclient_idを使用することで現在でも取得可能だがグレーな方法
 		# https://ja.stackoverflow.com/questions/83617/twitch-api-を用いてアーカイブ動画のコメントを取得したい
-		headers={'client-id':'kimne78kx3ncx6brgo4mv6wki5h1ko'}
+		# headers={'client-id':'kimne78kx3ncx6brgo4mv6wki5h1ko'}
+		# 2023年6月5日 TwitchDownloaderで変更されていたので反映したら正常に動作した
+		headers={'client-id':'kd1unb4b3q4t58fwlpcbzcbnm76a8fp'}
 
 		# 追加
 		ts_chat_url='https://gql.twitch.tv/gql'
@@ -96,6 +98,7 @@ def ajax_proc_test01(request):
 			video_data_query={"query":"query{video(id:"+str(post_data['req_videoids'])+"){title,lengthSeconds}}"}
 			r=requests.post(ts_chat_url,headers=headers,json=video_data_query)
 			video_data=r.json()
+			print(video_data)
 			# 追加
 
 			# 長さ(秒)
